@@ -28,7 +28,11 @@ var snake = (function(ctx){
 
     var head = tail[tail.length-1];
     var direction = "up";
+    var isdead = false;
 
+    var getHead = function(){
+      return head;
+    };
 
     var print = function(){
       tail.forEach(function(i){
@@ -37,9 +41,16 @@ var snake = (function(ctx){
 
     };
 
+    var dead = function(){
+      isdead = true;
+    };
+
     var move = function(){
       var newHead;
-      if(direction === "right"){
+      if(isdead){
+        return false;
+      }
+      else if(direction === "right"){
         newHead = new Pixel(head.x+1, head.y, ctx, 10);
       }
       else if(direction === "down"){
@@ -51,27 +62,28 @@ var snake = (function(ctx){
       else if(direction === "left"){
         newHead = new Pixel(head.x-1, head.y, ctx, 10);
       }
+
       tail.push(newHead);
       tail.shift();
       head = newHead;
-
-
     };
 
-var setDirection = function(dir){
-  if(direction === "left" && dir === "right" ||
-  direction === "right" && dir === "left" ||
-  direction === "up" && dir === "down" ||
-  direction === "down" && dir === "up"){
-    return false;
-  }
-  direction = dir;
-};
+  var setDirection = function(dir){
+    if(direction === "left" && dir === "right" ||
+    direction === "right" && dir === "left" ||
+    direction === "up" && dir === "down" ||
+    direction === "down" && dir === "up"){
+      return false;
+    }
+    direction = dir;
+  };
 
     return{
       print:print,
       move : move,
-      setDirection:setDirection
+      setDirection:setDirection,
+      getHead : getHead,
+      dead : dead
     };
   }(ctx));
 
@@ -90,36 +102,17 @@ $(document).keydown(function(e){
     }
   });
 setInterval(function(){
-// ctx.clearRect(0,0, canvasWidth, canvasHeight);
-// snake.moveR();
-// snake.print();
+  checkBorders(snake);
   ctx.clearRect(0,0, canvasWidth, canvasHeight);
   snake.move();
   snake.print();
+
 },100);
-// we call the function with this
-// var s = new Pixel(3,4,ctx, 10);
-// s.print();
-//s.print();
-//s.moveDown();
-//s.moveRight();
 
 
-
-//console.log(s);
-
-
-
-    // this.moveDown = function(){
-    //   var c = document.getElementById("hackCanvas");
-    //   var ctx = c.getContext("2d");
-    //   ctx.fillStyle = "green";
-    //   ctx.fillRect(this.x,this.y,this.x, this.y+10);
-    // };
-
-    // this.moveRight = function(){
-    //   var c = document.getElementById("hackCanvas");
-    //   var ctx = c.getContext("2d");
-    //   ctx.fillStyle = "green";
-    //   ctx.fillRect(this.x,this.y,this.x+10, this.y);
-    // };
+var checkBorders = function(snake){
+    console.log(canvasWidth);
+  if(snake.getHead().x >= canvasWidth/10 || snake.getHead().y >=  canvasHeight/10 || snake.getHead().x <= 0 || snake.getHead().y <=0){
+    snake.dead();
+  }
+};
