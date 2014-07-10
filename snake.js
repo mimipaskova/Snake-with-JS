@@ -59,12 +59,14 @@ var snake = (function(ctx){
     };
 
 var setDirection = function(dir){
-  if(direction === "left" && dir === "right" || direction === "right" && dir === "left" || direction === "up" && dir === "down" || direction === "down" && dir === "up"){
+  if(direction === "left" && dir === "right" ||
+  direction === "right" && dir === "left" ||
+  direction === "up" && dir === "down" ||
+  direction === "down" && dir === "up"){
     return false;
   }
   direction = dir;
-
-    };
+};
 
     return{
       print:print,
