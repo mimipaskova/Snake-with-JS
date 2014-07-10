@@ -41,7 +41,7 @@ var snake = (function(ctx){
 
     };
 
-    var dead = function(){
+    var kill = function(){
       isdead = true;
     };
 
@@ -83,7 +83,7 @@ var snake = (function(ctx){
       move : move,
       setDirection:setDirection,
       getHead : getHead,
-      dead : dead
+      kill : kill
     };
   }(ctx));
 
@@ -111,8 +111,7 @@ setInterval(function(){
 
 
 var checkBorders = function(snake){
-    console.log(canvasWidth);
   if(snake.getHead().x >= canvasWidth/10 || snake.getHead().y >=  canvasHeight/10 || snake.getHead().x <= 0 || snake.getHead().y <=0){
-    snake.dead();
+    snake.kill();
   }
 };
