@@ -18,6 +18,8 @@ function Pixel(x,y, ctx, size) {
     };
 }
 
+
+
 var snake = (function(ctx){
     var tail = [];
     [1,2,3].forEach(function(i){
@@ -52,14 +54,39 @@ var snake = (function(ctx){
       tail.push(newHead);
       tail.shift();
       head = newHead;
+
+
+    };
+
+var setDirection = function(dir){
+  if(direction === "left" && dir === "right" || direction === "right" && dir === "left" || direction === "up" && dir === "down" || direction === "down" && dir === "up"){
+    return false;
+  }
+  direction = dir;
+
     };
 
     return{
       print:print,
-      move : move
+      move : move,
+      setDirection:setDirection
     };
   }(ctx));
 
+$(document).keydown(function(e){
+    if (e.keyCode == 37) {
+       snake.setDirection("left");
+    }
+    else if(e.keyCode == 38) {
+       snake.setDirection("up");
+    }
+    else if(e.keyCode == 39) {
+       snake.setDirection("right");
+    }
+    else if(e.keyCode == 40) {
+       snake.setDirection("down");
+    }
+  });
 setInterval(function(){
 // ctx.clearRect(0,0, canvasWidth, canvasHeight);
 // snake.moveR();
