@@ -109,7 +109,6 @@ setInterval(function(){
 
 },100);
 
-
 var checkBorders = function(snake){
   if(snake.getHead().x >= canvasWidth/10 || snake.getHead().y >=  canvasHeight/10 || snake.getHead().x <= 0 || snake.getHead().y <=0){
     snake.kill();
