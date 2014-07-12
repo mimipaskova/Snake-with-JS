@@ -65,6 +65,7 @@ var snake = (function(ctx){
       }
       console.log(food);
       if(isOnFood(food)){
+        food.randFood();
       }
       else
       {
@@ -122,6 +123,7 @@ setInterval(function(){
   ctx.clearRect(0,0, canvasWidth, canvasHeight);
   snake.move(food);
   snake.print();
+  //food.randFood();
   food.print();
   console.log(snake.isOnFood(food));
 
@@ -151,10 +153,19 @@ var food = (function(ctx){
     pixel.print();
   };
 
+  var randFood = function(){
+    var randX = Math.floor(Math.random() * canvasWidth/10) + 1;
+    var randY = Math.floor(Math.random() * canvasHeight/10) + 1;
+    pixel = new Pixel(randX, randY, ctx,10);
+    console.log(randX);
+    console.log(randY);
+  };
+
   return{
     print:print,
     getX:getX,
     getY:getY,
+    randFood:randFood
   };
 
 }(ctx));
