@@ -46,7 +46,7 @@ var snake = (function(ctx){
     };
 
 
-    var move = function(){
+    var move = function(food){
       var newHead;
       if(isdead){
         return false;
@@ -63,11 +63,24 @@ var snake = (function(ctx){
       else if(direction === "left"){
         newHead = new Pixel(head.x-1, head.y, ctx, 10);
       }
-
+      console.log(food);
+      if(isOnFood(food)){
+      }
+      else
+      {
+        tail.shift();
+      }
       tail.push(newHead);
-      tail.shift();
       head = newHead;
     };
+
+  var isOnFood = function(food){
+    if(head.x === food.getX() && head.y === food.getY()){
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   var setDirection = function(dir){
     if(direction === "left" && dir === "right" ||
@@ -84,7 +97,8 @@ var snake = (function(ctx){
       move : move,
       setDirection:setDirection,
       getHead : getHead,
-      kill : kill
+      kill : kill,
+      isOnFood: isOnFood
     };
   }(ctx));
 
@@ -106,9 +120,10 @@ $(document).keydown(function(e){
 setInterval(function(){
   checkBorders(snake);
   ctx.clearRect(0,0, canvasWidth, canvasHeight);
-  snake.move();
+  snake.move(food);
   snake.print();
   food.print();
+  console.log(snake.isOnFood(food));
 
 },100);
 
@@ -120,15 +135,26 @@ var checkBorders = function(snake){
 
 
 var food = (function(ctx){
-  var pixel = new Pixel(1,8,ctx, 10);
+  var pixel = new Pixel(5,8,ctx, 10);
+
+  //var that = this;
+
+  var getX = function(){
+    return pixel.x;
+  };
+
+  var getY = function(){
+    return pixel.y;
+  };
 
   var print = function(){
-    console.log("printtt");
     pixel.print();
   };
 
-      return{
-      print:print
-    };
+  return{
+    print:print,
+    getX:getX,
+    getY:getY,
+  };
 
 }(ctx));
