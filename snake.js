@@ -45,6 +45,7 @@ var snake = (function(ctx){
       isdead = true;
     };
 
+
     var move = function(){
       var newHead;
       if(isdead){
@@ -101,16 +102,33 @@ $(document).keydown(function(e){
        snake.setDirection("down");
     }
   });
+
 setInterval(function(){
   checkBorders(snake);
   ctx.clearRect(0,0, canvasWidth, canvasHeight);
   snake.move();
   snake.print();
+  food.print();
 
 },100);
 
 var checkBorders = function(snake){
-  if(snake.getHead().x >= canvasWidth/10 || snake.getHead().y >=  canvasHeight/10 || snake.getHead().x <= 0 || snake.getHead().y <=0){
+  if(snake.getHead().x >= canvasWidth/10 || snake.getHead().y >=  canvasHeight/10 || snake.getHead().x < 0 || snake.getHead().y <0){
     snake.kill();
   }
 };
+
+
+var food = (function(ctx){
+  var pixel = new Pixel(1,8,ctx, 10);
+
+  var print = function(){
+    console.log("printtt");
+    pixel.print();
+  };
+
+      return{
+      print:print
+    };
+
+}(ctx));
