@@ -1,20 +1,26 @@
 "use strict";
 
+
 var c = document.getElementById("hackCanvas");
 var ctx = c.getContext("2d");
 var canvasWidth = $("#hackCanvas").width();
 var canvasHeight = $("#hackCanvas").height();
+var snakeColour = "red";
+var foodColour = "blue";
+//ctx.foodColour(img,10,10);
 
-function Pixel(x,y, ctx, size) {
+function Pixel(x,y, ctx, size, color) {
     this.x = x;
     this.y = y;
     this.ctx = ctx;
     this.size = size;
+    this.color = color;
 
     this.print = function(){
-      this.ctx.fillStyle = "green";
+      this.ctx.fillStyle = color;
 
-      this.ctx.fillRect(this.x * this.size, this.y * this.size, this.size, this.size);
+      this.ctx.fillRect(this.x * this.size, this.y * this.size, this.size, this.size, this.color);
+
     };
 }
 
@@ -23,7 +29,7 @@ function Pixel(x,y, ctx, size) {
 var snake = (function(ctx){
     var tail = [];
     [1,2,3].forEach(function(i){
-      tail.push(new Pixel(i+20,10,ctx, 10));
+      tail.push(new Pixel(i+20,10,ctx, 10, snakeColour));
     });
 
     var head = tail[tail.length-1];
@@ -52,18 +58,18 @@ var snake = (function(ctx){
         return false;
       }
       else if(direction === "right"){
-        newHead = new Pixel(head.x+1, head.y, ctx, 10);
+        newHead = new Pixel(head.x+1, head.y, ctx, 10, snakeColour);
       }
       else if(direction === "down"){
-        newHead = new Pixel(head.x, head.y+1, ctx, 10);
+        newHead = new Pixel(head.x, head.y+1, ctx, 10, snakeColour);
       }
       else if(direction === "up"){
-        newHead = new Pixel(head.x, head.y-1, ctx, 10);
+        newHead = new Pixel(head.x, head.y-1, ctx, 10, snakeColour);
       }
       else if(direction === "left"){
-        newHead = new Pixel(head.x-1, head.y, ctx, 10);
+        newHead = new Pixel(head.x-1, head.y, ctx, 10, snakeColour);
       }
-      console.log(food);
+      //console.log(food);
       if(isOnFood(food)){
         food.randFood();
       }
@@ -123,9 +129,7 @@ setInterval(function(){
   ctx.clearRect(0,0, canvasWidth, canvasHeight);
   snake.move(food);
   snake.print();
-  //food.randFood();
   food.print();
-  console.log(snake.isOnFood(food));
 
 },100);
 
@@ -137,28 +141,33 @@ var checkBorders = function(snake){
 
 
 var food = (function(ctx){
-  var pixel = new Pixel(5,8,ctx, 10);
-
+  var x=5,
+      y=8;
   //var that = this;
 
   var getX = function(){
-    return pixel.x;
+    return x;
   };
 
   var getY = function(){
-    return pixel.y;
+    return y;
   };
 
+  var imageObj = new Image();
+  imageObj.src = 'apple.png';
+
   var print = function(){
-    pixel.print();
+    ctx.drawImage(imageObj, getX() * 10, getY() * 10, 10, 10);
+    //ctx.fillStyle = foodColour;
+    //pixel.print();
+    //ctx.fillRect(getX() * 10, getY() * 10,10,10);
   };
 
   var randFood = function(){
-    var randX = Math.floor(Math.random() * canvasWidth/10) + 1;
-    var randY = Math.floor(Math.random() * canvasHeight/10) + 1;
-    pixel = new Pixel(randX, randY, ctx,10);
-    console.log(randX);
-    console.log(randY);
+    var randX = Math.floor(Math.random() * canvasWidth/10);
+    var randY = Math.floor(Math.random() * canvasHeight/10);
+    x=randX;
+    y=randY;
   };
 
   return{
