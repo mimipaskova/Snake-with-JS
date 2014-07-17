@@ -5,9 +5,11 @@ var c = document.getElementById("hackCanvas");
 var ctx = c.getContext("2d");
 var canvasWidth = $("#hackCanvas").width();
 var canvasHeight = $("#hackCanvas").height();
-var snakeColour = "red";
+var snakeColour = $("#color").val();
 var foodColour = "blue";
-//ctx.foodColour(img,10,10);
+var gameUpdateInterval = 100;
+var paused = false;
+var score = 0;
 
 function Pixel(x,y, ctx, size, color) {
     this.x = x;
@@ -16,7 +18,7 @@ function Pixel(x,y, ctx, size, color) {
     this.size = size;
     this.color = color;
 
-    this.print = function(){
+    this.draw = function(){
       this.ctx.fillStyle = color;
 
       this.ctx.fillRect(this.x * this.size, this.y * this.size, this.size, this.size, this.color);
@@ -26,7 +28,7 @@ function Pixel(x,y, ctx, size, color) {
 
 
 
-var snake = (function(ctx){
+var snake = (function(ctx,snakeColour){
     var tail = [];
     [1,2,3].forEach(function(i){
       tail.push(new Pixel(i+20,10,ctx, 10, snakeColour));
@@ -40,15 +42,16 @@ var snake = (function(ctx){
       return head;
     };
 
-    var print = function(){
+    var draw = function(){
       tail.forEach(function(i){
-        i.print();
+        i.draw();
       });
 
     };
 
     var kill = function(){
       isdead = true;
+      score = 0;
     };
 
 
@@ -83,6 +86,8 @@ var snake = (function(ctx){
 
   var isOnFood = function(food){
     if(head.x === food.getX() && head.y === food.getY()){
+      score++;
+      $("#score").html(score);
       return true;
     } else {
       return false;
@@ -99,15 +104,20 @@ var snake = (function(ctx){
     direction = dir;
   };
 
+  var setColor = function(color){
+    snakeColour = color;
+  }
+
     return{
-      print:print,
+      draw:draw,
       move : move,
       setDirection:setDirection,
+      setColor: setColor,
       getHead : getHead,
       kill : kill,
       isOnFood: isOnFood
     };
-  }(ctx));
+  }(ctx, snakeColour));
 
 $(document).keydown(function(e){
     if (e.keyCode == 37) {
@@ -122,16 +132,15 @@ $(document).keydown(function(e){
     else if(e.keyCode == 40) {
        snake.setDirection("down");
     }
+    if(e.keyCode == 32){
+      paused = !paused;
+      $("#pause").prop("checked", paused);
+      event.preventDefault();
+    }
+
   });
 
-setInterval(function(){
-  checkBorders(snake);
-  ctx.clearRect(0,0, canvasWidth, canvasHeight);
-  snake.move(food);
-  snake.print();
-  food.print();
 
-},100);
 
 var checkBorders = function(snake){
   if(snake.getHead().x >= canvasWidth/10 || snake.getHead().y >=  canvasHeight/10 || snake.getHead().x < 0 || snake.getHead().y <0){
@@ -156,10 +165,10 @@ var food = (function(ctx){
   var imageObj = new Image();
   imageObj.src = 'apple.png';
 
-  var print = function(){
+  var draw = function(){
     ctx.drawImage(imageObj, getX() * 10, getY() * 10, 10, 10);
     //ctx.fillStyle = foodColour;
-    //pixel.print();
+    //pixel.draw();
     //ctx.fillRect(getX() * 10, getY() * 10,10,10);
   };
 
@@ -171,10 +180,72 @@ var food = (function(ctx){
   };
 
   return{
-    print:print,
+    draw:draw,
     getX:getX,
     getY:getY,
     randFood:randFood
   };
 
 }(ctx));
+
+var settings = (function(){
+  var gameSpeedValue;
+
+
+  var checkSpeed = function(){
+    gameSpeedValue = $("#slider1").val();
+    if(gameSpeedValue<250){
+      gameUpdateInterval = 150;
+    }
+    else if(gameSpeedValue >=250 && gameSpeedValue < 400){
+      gameUpdateInterval = 100;
+    }
+    else{
+      gameUpdateInterval = 80;
+    }
+  }
+
+
+  var pause = function(){
+    var isChecked = $("#pause").is(':checked') ;
+    if(isChecked){
+      //pause
+      paused = true;
+    }
+    else{
+      paused = false;
+    }
+  };
+
+  return{
+    checkSpeed:checkSpeed,
+    pause:pause
+  };
+  }());
+
+$("#pause").change(function(){
+  settings.pause();
+});
+
+$("#color").click(function(){
+  paused = true;
+  $("#pause").prop("checked", paused);
+});
+
+$("#color").change(function(){
+  snake.setColor($("#color").val());
+})
+
+var gameLoop = function(){
+  if(!paused){
+    checkBorders(snake);
+    ctx.clearRect(0,0, canvasWidth, canvasHeight);
+    snake.move(food);
+    snake.draw();
+    food.draw();
+    settings.checkSpeed();
+  }
+
+  setTimeout(gameLoop, gameUpdateInterval);
+};
+gameLoop();

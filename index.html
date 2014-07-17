@@ -3,13 +3,23 @@
 <head>
     <title>Snake</title>
     <style type="text/css" media="screen">    
-    canvas { background:url(grass.jpg) }
-  </style>    
+        canvas { background:url(grass.jpg) }
+    </style>    
 </head>
 <body>
     
         <canvas id="hackCanvas" width="400" height="400" style="border:1px solid"></canvas>
         <!-- <div><img src="apple.png" id="apple"></div> -->
+        <table id="table", width="400" height="200" style="border:1px solid; display:inline-block; vertical-align:top">
+        <tr>
+            <td>
+                <div>Result: <span id="score"> 0 </span></div>
+                <input id="slider1" type="range" min="100" max="500" step="10" /><br><br>
+                <input id="pause" type="checkbox">Pause<br><br>
+                <input id="color" type="color" name="favcolor">     
+            </td>
+        </tr>
+        </table>
 
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script type="text/javascript" src="snake.js"></script>
